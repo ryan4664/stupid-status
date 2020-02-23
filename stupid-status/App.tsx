@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components/native";
-import { Text } from "react-native";
+import { Image, Animated, Easing } from "react-native";
 
 enum Colours {
   EERIE_BLACK = "#19191D",
@@ -59,20 +59,67 @@ const StatusButtonText = styled.Text`
   padding: 20px;
 `;
 
+interface IStatus {
+  id: string;
+  status: string;
+}
+
 export default function App() {
+  const [statuses, setStatuses] = useState<IStatus[]>([]);
+  const [isFetching, setIsFetching] = useState<boolean>(true);
+  const spinValue = new Animated.Value(0);
+  const spin = spinValue.interpolate({
+    inputRange: [0, 1],
+    outputRange: ["0deg", "360deg"]
+  });
+  useEffect(() => {
+    const getStatuses = async () => {
+      setIsFetching(true);
+      let result = await fetch(
+        "http://dummy.restapiexample.com/api/v1/employees"
+      ).then(response => response.json());
+
+      setIsFetching(true);
+      // console.log(result);
+    };
+    getStatuses();
+
+    // First set up animation
+
+    // Second interpolate beginning and end values (in this case 0 and 1)
+
+    Animated.loop(
+      Animated.timing(spinValue, {
+        toValue: 1,
+        duration: 3000,
+        useNativeDriver: true,
+        easing: Easing.linear,
+      })
+    ).start();
+  }, []);
+
   return (
     <Wrapper>
-      <LogoWrapper>
-        <StatusText>Stupid Status</StatusText>
-      </LogoWrapper>
-      <StatusWrapper>
-        <StatusText>Status here!</StatusText>
-      </StatusWrapper>
-      <ButtonWrapper>
-        <StatusButton>
-          <StatusButtonText>Get New Status</StatusButtonText>
-        </StatusButton>
-      </ButtonWrapper>
+      {isFetching ? (
+        <Animated.Image
+          style={{ width: 300, height: 300, transform: [{ rotate: spin }] }}
+          source={require("./assets/logo.png")}
+        />
+      ) : (
+        <>
+          <LogoWrapper>
+            <StatusText>Stupid Status</StatusText>
+          </LogoWrapper>
+          <StatusWrapper>
+            <StatusText>Status here!</StatusText>
+          </StatusWrapper>
+          <ButtonWrapper>
+            <StatusButton>
+              <StatusButtonText>Get New Status</StatusButtonText>
+            </StatusButton>
+          </ButtonWrapper>
+        </>
+      )}
     </Wrapper>
   );
 }
