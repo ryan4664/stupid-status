@@ -21,14 +21,16 @@ const Wrapper = styled.View`
 const LogoWrapper = styled.View`
   display: flex;
   flex: 1;
-  justify-content: center;
+  justify-content: flex-start;
+  margin-top: 50px;
   align-items: center;
 `;
 
 const StatusWrapper = styled.View`
   display: flex;
-  flex: 2;
-  justify-content: center;
+  flex: 1;
+  justify-content: flex-start;
+  align-items: center;
 `;
 
 const StatusText = styled.Text`
@@ -202,7 +204,7 @@ export default function App() {
 
   useEffect(() => {
     if (tapCount === 10) {
-      setShowCreateView(true);
+      // setShowCreateView(true);
     }
   }, [tapCount]);
 
